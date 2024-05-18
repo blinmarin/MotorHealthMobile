@@ -36,8 +36,6 @@ class myDbManager(context: Context) {
 
     }
 
-
-
     fun readDbData(): MutableList<DataItem> {
 //        db?.execSQL(myDbNameClass.DROP_TABLE)
         var resultList : MutableList<DataItem> = ArrayList()
@@ -56,6 +54,11 @@ class myDbManager(context: Context) {
         }
         cursor.close()
         return resultList
+    }
+
+    fun deleteDbData(time: String){
+        db?.delete(myDbNameClass.TABLE_NAME, myDbNameClass.COLUMN_NAME_TIME+"=?", arrayOf(time))
+
     }
 
     fun closeDb() {

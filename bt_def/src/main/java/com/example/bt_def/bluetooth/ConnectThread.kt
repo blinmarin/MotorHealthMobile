@@ -7,11 +7,16 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
 import androidx.lifecycle.LifecycleOwner
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
 import com.example.bt_def.BluetoothConstants
 import com.example.bt_def.databinding.ListItemBinding
 import com.example.bt_def.db.myDbManager
 import com.google.android.material.snackbar.Snackbar
+import org.json.JSONException
+import org.json.JSONObject
 import java.io.IOException
+import java.io.UnsupportedEncodingException
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.UUID
