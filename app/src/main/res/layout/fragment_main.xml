@@ -28,12 +28,12 @@
             android:id="@+id/bList"
             android:layout_width="220dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="44dp"
             android:text="Выбрать устройство для подключения"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="@+id/editText"
             app:layout_constraintStart_toStartOf="@+id/editText"
-            app:layout_constraintTop_toBottomOf="@+id/editText" />
+            app:layout_constraintTop_toBottomOf="@+id/buttonDb" />
 
         <EditText
             android:id="@+id/editText"
@@ -47,6 +47,17 @@
             app:layout_constraintEnd_toEndOf="@+id/tvStatus"
             app:layout_constraintStart_toStartOf="@+id/tvStatus"
             app:layout_constraintTop_toBottomOf="@+id/tvStatus" />
+
+        <Button
+            android:id="@+id/buttonDb"
+            android:layout_width="219dp"
+            android:layout_height="56dp"
+            android:layout_marginTop="44dp"
+            android:text="Проверить отправленные данные"
+            app:layout_constraintEnd_toEndOf="@+id/editText"
+            app:layout_constraintHorizontal_bias="0.555"
+            app:layout_constraintStart_toStartOf="@+id/editText"
+            app:layout_constraintTop_toBottomOf="@+id/editText" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

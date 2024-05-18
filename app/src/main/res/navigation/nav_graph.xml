@@ -12,9 +12,17 @@
         <action
             android:id="@+id/action_mainFragment_to_deviceListFragment"
             app:destination="@id/deviceListFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_dbFragment"
+            app:destination="@id/dbFragment" />
     </fragment>
     <fragment
         android:id="@+id/deviceListFragment"
         android:name="com.example.bt_def.DeviceListFragment"
         android:label="DeviceListFragment" />
+    <fragment
+        android:id="@+id/dbFragment"
+        android:name="com.example.motorhealth.DbFragment"
+        android:label="fragment_db"
+        tools:layout="@layout/fragment_db" />
 </navigation>

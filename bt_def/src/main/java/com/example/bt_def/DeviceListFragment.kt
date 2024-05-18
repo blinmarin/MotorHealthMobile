@@ -20,17 +20,15 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.bt_def.bluetooth.BluetoothController
 import com.example.bt_def.databinding.FragmentListBinding
+import com.example.bt_def.db.myDbManager
 import com.google.android.material.snackbar.Snackbar
 
 class DeviceListFragment : Fragment() {
-//    private var preferences: SharedPreferences? = null
     private lateinit var itemAdapter: ItemAdapter
     private lateinit var discoveryAdapter: ItemAdapter
     private lateinit var bAdapter: BluetoothAdapter
@@ -65,7 +63,6 @@ class DeviceListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        preferences = activity?.getSharedPreferences(BluetoothConstants.PREFERENCES, Context.MODE_PRIVATE)
         binding.imBluetoothOn.setOnClickListener{
             btLauncher.launch(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE))
         }
@@ -97,8 +94,9 @@ class DeviceListFragment : Fragment() {
         rcViewSearch.layoutManager = LinearLayoutManager(requireContext())
         initBtAdapter()
         bluetoothController = BluetoothController(bAdapter)
-        itemAdapter = ItemAdapter( false, bluetoothController)
-        discoveryAdapter = ItemAdapter( true, bluetoothController)
+        val context = requireContext()
+        itemAdapter = ItemAdapter( false, bluetoothController, context, viewLifecycleOwner)
+        discoveryAdapter = ItemAdapter( true, bluetoothController, context, viewLifecycleOwner)
         rcViewPaired.adapter = itemAdapter
         rcViewSearch.adapter = discoveryAdapter
     }
@@ -111,7 +109,6 @@ class DeviceListFragment : Fragment() {
                 list.add(
                     ListItem(
                         it
-//                        preferences?.getString(BluetoothConstants.MAC, "") == it.address
                     )
                 )
             }
@@ -178,16 +175,6 @@ class DeviceListFragment : Fragment() {
         }
     }
 
-//    private fun saveMac(mac: String){
-//        val editor = preferences?.edit()
-//        editor?.putString(BluetoothConstants.MAC, mac)
-//        editor?.apply()
-//    }
-
-//    override fun onClick(item: ListItem) {
-//        saveMac(item.device.address)
-//
-//    }
 
     private val bReceiver = object : BroadcastReceiver(){
         override fun onReceive(p0: Context?, intent: Intent?) {

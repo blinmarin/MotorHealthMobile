@@ -1,22 +1,26 @@
 package com.example.bt_def
 
+import android.content.Context
 import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bt_def.bluetooth.BluetoothController
 import com.example.bt_def.databinding.ListItemBinding
+import com.example.bt_def.db.myDbManager
 import com.google.android.material.snackbar.Snackbar
 
-class ItemAdapter( val adapterType: Boolean, var bluetoothController: BluetoothController) : ListAdapter<ListItem, ItemAdapter.MyHolder>(Comparator()) {
-
+class ItemAdapter( val adapterType: Boolean, var bluetoothController: BluetoothController, var context: Context, var lifecycleOwner: LifecycleOwner) : ListAdapter<ListItem, ItemAdapter.MyHolder>(Comparator()) {
     class MyHolder(
         view: View,
         val adapterType: Boolean,
         val bluetoothController: BluetoothController,
+        val context: Context,
+        val lifecycleOwner: LifecycleOwner
     ) : RecyclerView.ViewHolder(view){
         private val b = ListItemBinding.bind(view)
         private var item1: ListItem? = null
@@ -37,7 +41,14 @@ class ItemAdapter( val adapterType: Boolean, var bluetoothController: BluetoothC
                     }
 
                 } else {
-                    bluetoothController.connect(item1?.device?.address ?: "", b)
+                    bluetoothController.connect(item1?.device?.address ?: "", b, context)
+
+                    val networkConnection = NetworkConnectionBT(context)
+                    networkConnection.observe(lifecycleOwner){
+                        if(it){
+                            //////////////////попробовать отправить, если получилось очистить
+                        }
+                    }
                 }
             }
         }
@@ -67,7 +78,7 @@ class ItemAdapter( val adapterType: Boolean, var bluetoothController: BluetoothC
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.list_item, parent, false)
 
-        return MyHolder(view, adapterType, bluetoothController)
+        return MyHolder(view, adapterType, bluetoothController, context, lifecycleOwner)
     }
 
     override fun onBindViewHolder(holder: MyHolder, position: Int) {
