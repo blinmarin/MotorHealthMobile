@@ -99,7 +99,7 @@ class ConnectThread(device: BluetoothDevice, b: ListItemBinding, context: Contex
 
                 Snackbar.make(binding.root, "Данные сохранены и будут отправлены", Snackbar.LENGTH_LONG).show()
             } catch(e: IOException){
-                Snackbar.make(binding.root, "Ошибка подключения", Snackbar.LENGTH_LONG).show()
+                Snackbar.make(binding.root, "При получении данных произошла ошибка", Snackbar.LENGTH_LONG).show()
                 val editor = preferences?.edit()
                 editor?.putString(BluetoothConstants.MOTOR_ID, null)
                 editor?.apply()
@@ -109,19 +109,19 @@ class ConnectThread(device: BluetoothDevice, b: ListItemBinding, context: Contex
         }
     }
 
-//    fun sendMessage(message: String){
-//        try{
-//            mSocket?.outputStream?.write(message.toByteArray())
-//        }catch (e: IOException){
-//            listener.onReceive(BluetoothController.BLUETOOTH_NO_CONNECTED)
-//        }
-//    }
+    fun sendMessage(message: String){
+        try{
+            mSocket?.outputStream?.write(message.toByteArray())
+        }catch (e: IOException){
+            Snackbar.make(binding.root, "При получении данных произошла ошибка", Snackbar.LENGTH_LONG).show()
+        }
+    }
 
-//    fun closeConnection(){
-//        try{
-//            mSocket?.close()
-//        } catch (e: IOException){
-//
-//        }
-//    }
+    fun closeConnection(){
+        try{
+            mSocket?.close()
+        } catch (e: IOException){
+
+        }
+    }
 }

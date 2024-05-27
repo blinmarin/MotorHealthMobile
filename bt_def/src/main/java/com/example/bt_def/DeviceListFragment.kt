@@ -215,4 +215,9 @@ class DeviceListFragment : Fragment() {
         activity?.registerReceiver(bReceiver, f3)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        bluetoothController.closeConnection()
+    }
+
 }

@@ -20,11 +20,11 @@ class BluetoothController(private val adapter: BluetoothAdapter) {
             connectThread?.start()
         }
     }
-//    fun sendMessage(message: String){
-//        connectThread?.sendMessage(message)
-//    }
-//    fun closeConnection(){
-//        connectThread?.closeConnection()
-//    }
+    fun sendMessage(message: String){
+        connectThread?.sendMessage(message)
+    }
+    fun closeConnection(){
+        connectThread?.closeConnection()
+    }
 
 }
