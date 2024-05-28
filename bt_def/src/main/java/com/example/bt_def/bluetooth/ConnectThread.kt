@@ -5,7 +5,9 @@ import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothSocket
 import android.content.Context
 import android.content.SharedPreferences
+import android.os.CountDownTimer
 import android.util.Log
+import android.view.View
 import androidx.lifecycle.LifecycleOwner
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
@@ -42,24 +44,12 @@ class ConnectThread(device: BluetoothDevice, b: ListItemBinding, context: Contex
     override fun run(){
         try{
 
-//            preferences = myContext.getSharedPreferences(BluetoothConstants.MOTOR_ID, Context.MODE_PRIVATE)
-//            dbManager.openDb()
-//            val id = preferences?.getString(BluetoothConstants.MOTOR_ID, "")
-//            val editor = preferences?.edit()
-//            editor?.putString(BluetoothConstants.MOTOR_ID, null)
-//            editor?.apply()
-//            val sdf = SimpleDateFormat("dd/M/yyyy hh:mm:ss")
-//            val currentDate = sdf.format(Date())
-//            if (id != null) {
-//                dbManager.insertToDb(id, "Здесь была Марина", currentDate)
-//            }
-//            dbManager.closeDb()
-
-
             Snackbar.make(binding.root, "Подключение...", Snackbar.LENGTH_LONG).show()
             mSocket?.connect()
             Snackbar.make(binding.root, "Подключено", Snackbar.LENGTH_LONG).show()
             readMessage()
+            Log.d("MyLog", "Остановка подключения....")
+
         } catch (e: IOException){
             Snackbar.make(binding.root, "Ошибка подключения", Snackbar.LENGTH_LONG).show()
 
@@ -80,6 +70,8 @@ class ConnectThread(device: BluetoothDevice, b: ListItemBinding, context: Contex
         val buffer = ByteArray(256)
         while(true){
             try{
+                sendMessage("start")
+                Log.d("MyLog", "Получение....")
                 val length = mSocket?.inputStream?.read(buffer)
                 val message = String(buffer, 0, length ?: 0)
                 Log.d("MyLog", "Получено: ${message}")
@@ -97,7 +89,6 @@ class ConnectThread(device: BluetoothDevice, b: ListItemBinding, context: Contex
                 }
                 dbManager.closeDb()
 
-                Snackbar.make(binding.root, "Данные сохранены и будут отправлены", Snackbar.LENGTH_LONG).show()
             } catch(e: IOException){
                 Snackbar.make(binding.root, "При получении данных произошла ошибка", Snackbar.LENGTH_LONG).show()
                 val editor = preferences?.edit()
@@ -107,6 +98,7 @@ class ConnectThread(device: BluetoothDevice, b: ListItemBinding, context: Contex
             }
 
         }
+        Snackbar.make(binding.root, "Данные сохранены и будут отправлены", Snackbar.LENGTH_LONG).show()
     }
 
     fun sendMessage(message: String){

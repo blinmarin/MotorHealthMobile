@@ -52,7 +52,7 @@ class MainFragment : Fragment() {
             if(it){
                 myDbManager.openDb()
                 val result = myDbManager.readDbData()
-                myDbManager.closeDb()
+//                myDbManager.closeDb()
                 for (item in result) {
                     requestData(item.id, item.info, item.time)
                 }
