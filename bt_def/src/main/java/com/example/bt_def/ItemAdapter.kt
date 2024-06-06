@@ -20,7 +20,10 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.io.UnsupportedEncodingException
 
-class ItemAdapter( val adapterType: Boolean, var bluetoothController: BluetoothController, var context: Context, var lifecycleOwner: LifecycleOwner) : ListAdapter<ListItem, ItemAdapter.MyHolder>(Comparator()) {
+//класс управления отдельным пунктом из списка двигателей
+class ItemAdapter( val adapterType: Boolean, var bluetoothController: BluetoothController,
+                   var context: Context, var lifecycleOwner: LifecycleOwner) : ListAdapter<ListItem,
+        ItemAdapter.MyHolder>(Comparator()) {
     class MyHolder(
         view: View,
         val adapterType: Boolean,
@@ -40,6 +43,7 @@ class ItemAdapter( val adapterType: Boolean, var bluetoothController: BluetoothC
         init {
             itemView.setOnClickListener{
                 timer.start()
+                // реализация сопряжения Bluetooth устройства
                 if (adapterType) {
                     try {
                         item1?.device?.createBond()
@@ -48,16 +52,19 @@ class ItemAdapter( val adapterType: Boolean, var bluetoothController: BluetoothC
                     }
 
                 } else {
+                    //подключение к устройству и получение данных
                     bluetoothController.connect(item1?.device?.address ?: "", b, context)
 
+                    //проверка на наличие подключения к сети Интернет
                     val networkConnection = NetworkConnectionBT(context)
                     networkConnection.observe(lifecycleOwner){
                         if(it){
+                            //попытка отправки данных из базы на сервер
                             dbManager.openDb()
                             val result = dbManager.readDbData()
                             dbManager.closeDb()
                             for (item in result) {
-                                requestData(item.id, item.info, item.time)
+                                requestData(item.info, item.time)
                             }
                         }
                     }
@@ -74,14 +81,12 @@ class ItemAdapter( val adapterType: Boolean, var bluetoothController: BluetoothC
             }
         }
 
-        private fun requestData(id: String, info: String, time: String){
+        private fun requestData(info: String, time: String){
             val url = "http://10.0.2.2:3000/motor"
             val requestBody: String
             try{
                 val jsonBody = JSONObject()
-                jsonBody.put("id", id)
-                jsonBody.put("info", info)
-                jsonBody.put("time", time)
+                jsonBody.put("data", "idengine:1234::temp:${info}")
                 requestBody = jsonBody.toString()
                 val request = object : StringRequest(
                     Method.POST,
@@ -118,7 +123,6 @@ class ItemAdapter( val adapterType: Boolean, var bluetoothController: BluetoothC
 
         }
     }
-
 
     class Comparator : DiffUtil.ItemCallback<ListItem>(){
         override fun areItemsTheSame(oldItem: ListItem, newItem: ListItem): Boolean {

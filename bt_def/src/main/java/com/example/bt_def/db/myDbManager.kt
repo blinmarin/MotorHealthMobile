@@ -17,14 +17,18 @@ class DataItem {
         this.time = time
     }
 }
+
+//класс для управления базой данных
 class myDbManager(context: Context) {
     val myDbHelper = MyDbHelper(context)
     var db: SQLiteDatabase? = null
 
+    //метод открытия базы данных
     fun openDb() {
         db = myDbHelper.writableDatabase
     }
 
+    //метод записи в базу данных
     fun insertToDb(id: String, info: String, time: String) {
         val values = ContentValues().apply {
             put(myDbNameClass.COLUMN_NAME_MOTOR_ID, id)
@@ -36,8 +40,8 @@ class myDbManager(context: Context) {
 
     }
 
+    //метод считывания записей из базы
     fun readDbData(): MutableList<DataItem> {
-//        db?.execSQL(myDbNameClass.DROP_TABLE)
         var resultList : MutableList<DataItem> = ArrayList()
         val cursor = db?.query(myDbNameClass.TABLE_NAME, null, null, null, null, null, null)
 
@@ -56,11 +60,13 @@ class myDbManager(context: Context) {
         return resultList
     }
 
+    //метод удаления записи в базе по идентификатору времени
     fun deleteDbData(time: String){
         db?.delete(myDbNameClass.TABLE_NAME, myDbNameClass.COLUMN_NAME_TIME+"=?", arrayOf(time))
 
     }
 
+    //метод для закрытия базы данных
     fun closeDb() {
         myDbHelper.close()
     }

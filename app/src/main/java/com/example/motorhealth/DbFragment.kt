@@ -25,8 +25,6 @@ class DbFragment : Fragment() {
         binding = FragmentDbBinding.inflate(inflater, container, false)
         myDbManager = myDbManager(requireContext())
         return binding.root
-
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

@@ -28,6 +28,7 @@ import com.example.bt_def.databinding.FragmentListBinding
 import com.example.bt_def.db.myDbManager
 import com.google.android.material.snackbar.Snackbar
 
+//код фрагмента, отображающего списки Bluetooth устройств
 class DeviceListFragment : Fragment() {
     private lateinit var itemAdapter: ItemAdapter
     private lateinit var discoveryAdapter: ItemAdapter
@@ -45,6 +46,7 @@ class DeviceListFragment : Fragment() {
         return binding.root
     }
 
+    //функции проверки разрешений
     private fun isLocationEnabled(): Boolean{
         val lm = activity?.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         return lm.isProviderEnabled(LocationManager.GPS_PROVIDER)
@@ -70,6 +72,7 @@ class DeviceListFragment : Fragment() {
             if (!isLocationEnabled()){
                 checkLocation()
             }else{
+                //поиск близлежащих bluetooth устройсв
                 try{
                     if(bAdapter.isEnabled == true){
                         bAdapter.startDiscovery()
@@ -206,6 +209,7 @@ class DeviceListFragment : Fragment() {
 
     }
 
+    //инициализация Intent фильтров
     private fun intentFilters(){
         val f1 = IntentFilter(BluetoothDevice.ACTION_FOUND)
         val f2 = IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED)

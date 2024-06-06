@@ -3,6 +3,7 @@ package com.example.bt_def
 import android.app.AlertDialog
 import android.content.Context
 
+//объект для вывода диалогового окна для запроса на разрешение включения геолокации
 object DialogManager {
     fun locationSettingsDialog(context: Context, listener: Listener){
         val builder = AlertDialog.Builder(context)

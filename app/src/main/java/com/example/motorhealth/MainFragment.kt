@@ -25,40 +25,36 @@ import org.json.JSONObject
 import java.io.UnsupportedEncodingException
 import java.text.SimpleDateFormat
 import java.util.Date
-
+//Код стартового экрана
 class MainFragment : Fragment() {
     private var preferences: SharedPreferences? = null
     private lateinit var binding: FragmentMainBinding
     private lateinit var myDbManager: myDbManager
-
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
         binding = FragmentMainBinding.inflate(inflater, container, false)
         myDbManager = myDbManager(requireContext())
         return binding.root
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        preferences = activity?.getSharedPreferences(BluetoothConstants.MOTOR_ID, Context.MODE_PRIVATE)
-
+        preferences = activity?.getSharedPreferences(BluetoothConstants.MOTOR_ID,
+            Context.MODE_PRIVATE)
+        // проверка на подключение к сети Интернет
         val networkConnection = NetworkConnection(requireContext())
         networkConnection.observe(viewLifecycleOwner){
             if(it){
                 myDbManager.openDb()
                 val result = myDbManager.readDbData()
-//                myDbManager.closeDb()
+                myDbManager.closeDb()
                 for (item in result) {
-                    requestData(item.id, item.info, item.time)
+                    requestData(item.info, item.time)
                 }
             }
         }
-
 
         binding.editText.addTextChangedListener(object: TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -85,30 +81,18 @@ class MainFragment : Fragment() {
         }
 
         binding.buttonDb.setOnClickListener{
-//            myDbManager.openDb()
-//            val id = preferences?.getString(BluetoothConstants.MOTOR_ID, "")
-//            val editor = preferences?.edit()
-//            editor?.putString(BluetoothConstants.MOTOR_ID, null)
-//            editor?.apply()
-//            val sdf = SimpleDateFormat("dd/M/yyyy hh:mm:ss")
-//            val currentDate = sdf.format(Date())
-//            if (id != null) {
-//                myDbManager.insertToDb(id, "Здесь была Марина", currentDate)
-//            }
-//            myDbManager.closeDb()
             findNavController().navigate(R.id.action_mainFragment_to_dbFragment)
 
         }
     }
-
-    private fun requestData(id: String, info: String, time: String){
-        val url = "http://10.0.2.2:3000/motor"
+//функция отправки данных на сервер POST запросом
+    private fun requestData(info: String, time: String){
+        val url = "http://188.225.58.30:8000/sensor_data/"
         val requestBody: String
         try{
             val jsonBody = JSONObject()
-            jsonBody.put("id", id)
-            jsonBody.put("info", info)
-            jsonBody.put("time", time)
+            jsonBody.put("data", "idengine:1234::temp:${info}")
+            //jsonBody.put("data", "idengine:1234::temp:1::vibration:1::hall:1::time:1653038401;idengine:123::temp:5678::vibration:54321::hall:12345::time:1653038401")
             requestBody = jsonBody.toString()
             val request = object : StringRequest(
                 Method.POST,

@@ -23,6 +23,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.UUID
 
+//класс ConnectThread для подключения к Bluetooth устройствам и получения данных
 class ConnectThread(device: BluetoothDevice, b: ListItemBinding, context: Context) : Thread(){
     private var preferences: SharedPreferences? = null
     private val uuid = "00001101-0000-1000-8000-00805F9B34FB"
@@ -30,7 +31,6 @@ class ConnectThread(device: BluetoothDevice, b: ListItemBinding, context: Contex
     private var binding = b
     private val dbManager = myDbManager(context)
     private val myContext = context
-
 
     init {
         try{
@@ -41,9 +41,10 @@ class ConnectThread(device: BluetoothDevice, b: ListItemBinding, context: Contex
 
         }
     }
+
+    //функция для открытия сокета, подключения и получения данных
     override fun run(){
         try{
-
             Snackbar.make(binding.root, "Подключение...", Snackbar.LENGTH_LONG).show()
             mSocket?.connect()
             Snackbar.make(binding.root, "Подключено", Snackbar.LENGTH_LONG).show()
@@ -65,6 +66,7 @@ class ConnectThread(device: BluetoothDevice, b: ListItemBinding, context: Contex
         }
     }
 
+    //функция получения данных с bluetooth-устройства
     @SuppressLint("SimpleDateFormat")
     private fun readMessage(){
         val buffer = ByteArray(256)
@@ -101,6 +103,7 @@ class ConnectThread(device: BluetoothDevice, b: ListItemBinding, context: Contex
         Snackbar.make(binding.root, "Данные сохранены и будут отправлены", Snackbar.LENGTH_LONG).show()
     }
 
+    //функция отправки сообщения для начала обмена данными
     fun sendMessage(message: String){
         try{
             mSocket?.outputStream?.write(message.toByteArray())
@@ -109,6 +112,7 @@ class ConnectThread(device: BluetoothDevice, b: ListItemBinding, context: Contex
         }
     }
 
+    //функция закрытия канала передачи данных
     fun closeConnection(){
         try{
             mSocket?.close()

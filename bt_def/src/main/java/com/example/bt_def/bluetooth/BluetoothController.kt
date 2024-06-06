@@ -10,6 +10,7 @@ import androidx.lifecycle.LifecycleOwner
 import com.example.bt_def.databinding.ListItemBinding
 import com.example.bt_def.db.myDbManager
 
+// класс для вызова функции подключения и получения данных у конктерной записи двигателя
 class BluetoothController(private val adapter: BluetoothAdapter) {
     private var connectThread: ConnectThread? = null
 

@@ -9,17 +9,15 @@ import android.net.Network
 import android.net.NetworkInfo
 import android.os.Build
 import androidx.lifecycle.LiveData
-
+//класс проверки на подключение к Интернету
 class NetworkConnection(private val context: Context): LiveData<Boolean>() {
 
     private val connectivityManager: ConnectivityManager =
         context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-
     private lateinit var networkConnectionCallback: ConnectivityManager.NetworkCallback
 
     override fun onActive() {
         super.onActive()
-
         updateNetworkConnection()
         when{
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ->{
@@ -28,11 +26,7 @@ class NetworkConnection(private val context: Context): LiveData<Boolean>() {
             context.registerReceiver(
                 networkReceiver,
                 IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
-            )
-        }
-        }
-
-
+            )}}
     }
 
     override fun onInactive() {
@@ -40,9 +34,7 @@ class NetworkConnection(private val context: Context): LiveData<Boolean>() {
         try{
             connectivityManager.unregisterNetworkCallback(connectionCallback())
         }catch(e: IllegalArgumentException){
-
     }
-
     }
 
     private  fun connectionCallback(): ConnectivityManager.NetworkCallback{
@@ -51,7 +43,6 @@ class NetworkConnection(private val context: Context): LiveData<Boolean>() {
                 super.onAvailable(network)
                 postValue(true)
             }
-
             override fun onLost(network: Network) {
                 super.onLost(network)
                 postValue(false)
@@ -68,9 +59,6 @@ class NetworkConnection(private val context: Context): LiveData<Boolean>() {
     private val networkReceiver = object: BroadcastReceiver(){
         override fun onReceive(context: Context?, intent: Intent?) {
             updateNetworkConnection()
-
         }
-
     }
-
 }
