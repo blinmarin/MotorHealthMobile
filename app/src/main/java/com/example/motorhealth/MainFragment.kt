@@ -24,10 +24,20 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.io.UnsupportedEncodingException
 import java.text.SimpleDateFormat
+import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.Period
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 import java.util.Date
+import kotlin.time.Duration
+
 //Код стартового экрана
 class MainFragment : Fragment() {
     private var preferences: SharedPreferences? = null
+    private var preferences_time: SharedPreferences? = null
+    private var preferences_items: SharedPreferences? = null
     private lateinit var binding: FragmentMainBinding
     private lateinit var myDbManager: myDbManager
     override fun onCreateView(
@@ -43,6 +53,10 @@ class MainFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         preferences = activity?.getSharedPreferences(BluetoothConstants.MOTOR_ID,
             Context.MODE_PRIVATE)
+        preferences_time = activity?.getSharedPreferences(BluetoothConstants.LAST_VISIT,
+            Context.MODE_PRIVATE)
+        preferences_items = activity?.getSharedPreferences(BluetoothConstants.BEEN_HERE,
+            Context.MODE_PRIVATE)
         // проверка на подключение к сети Интернет
         val networkConnection = NetworkConnection(requireContext())
         networkConnection.observe(viewLifecycleOwner){
@@ -55,6 +69,20 @@ class MainFragment : Fragment() {
                 }
             }
         }
+
+        val currentDateString = LocalDateTime.now().toString()
+        val currentDate = LocalDateTime.parse(currentDateString)
+        val lastVisitString = preferences_time?.getString(BluetoothConstants.LAST_VISIT, "2000-01-01T00:00:00.000")
+        val lastVisit = LocalDateTime.parse(lastVisitString)
+        if (ChronoUnit.HOURS.between(lastVisit, currentDate) > 24){
+            val editor = preferences_time?.edit()
+            editor?.putString(BluetoothConstants.LAST_VISIT,  currentDateString)
+            editor?.apply()
+            val editor_items = preferences_items?.edit()
+            editor_items?.putString(BluetoothConstants.BEEN_HERE,  "")
+            editor_items?.apply()
+        }
+
 
         binding.editText.addTextChangedListener(object: TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}

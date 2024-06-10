@@ -1,11 +1,15 @@
 package com.example.bt_def
 
+import android.Manifest
 import android.content.Context
+import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.os.CountDownTimer
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -29,7 +33,8 @@ class ItemAdapter( val adapterType: Boolean, var bluetoothController: BluetoothC
         val adapterType: Boolean,
         val bluetoothController: BluetoothController,
         val context: Context,
-        val lifecycleOwner: LifecycleOwner
+        val lifecycleOwner: LifecycleOwner,
+        private var preferences: SharedPreferences? = null
     ) : RecyclerView.ViewHolder(view){
         private val b = ListItemBinding.bind(view)
         private var item1: ListItem? = null
@@ -40,7 +45,13 @@ class ItemAdapter( val adapterType: Boolean, var bluetoothController: BluetoothC
             override fun onFinish() {b.itemSearch.visibility = View.GONE}
         }
 
+        val timer2 = object: CountDownTimer(1000000, 1000) {
+            override fun onTick(millisUntilFinished: Long) {b.beenHere.visibility = View.VISIBLE}
+            override fun onFinish() {b.beenHere.visibility = View.GONE}
+        }
+
         init {
+
             itemView.setOnClickListener{
                 timer.start()
                 // реализация сопряжения Bluetooth устройства
@@ -54,6 +65,7 @@ class ItemAdapter( val adapterType: Boolean, var bluetoothController: BluetoothC
                 } else {
                     //подключение к устройству и получение данных
                     bluetoothController.connect(item1?.device?.address ?: "", b, context)
+
 
                     //проверка на наличие подключения к сети Интернет
                     val networkConnection = NetworkConnectionBT(context)
@@ -70,12 +82,23 @@ class ItemAdapter( val adapterType: Boolean, var bluetoothController: BluetoothC
                     }
                 }
             }
+
+            b.beenHere.setOnClickListener {
+                Snackbar.make(b.root, "Данные с этого устройства уже получены", Snackbar.LENGTH_LONG).show()
+            }
         }
         fun bind(item: ListItem) = with(b){
             item1 = item
             try{
                 name.text = item.device.name
                 mac.text = item.device.address
+                preferences = context.getSharedPreferences(BluetoothConstants.BEEN_HERE, Context.MODE_PRIVATE)
+                val mass = preferences?.getString(BluetoothConstants.BEEN_HERE, "")
+                val names = mass?.split("|")
+                Log.d("MyLog", "AAAAAAAA: ${names}")
+                if (names?.contains(item1?.device?.address) == true){
+                    b.beenHere.visibility = View.VISIBLE
+                }
             } catch (e: SecurityException){
 
             }
